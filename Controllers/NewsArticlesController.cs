@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using News___WebAPI.Models;
+using News___WebAPI.Repositories;
 
 namespace News___WebAPI.Controllers
 {
@@ -8,9 +9,23 @@ namespace News___WebAPI.Controllers
     [ApiController]
     public class NewsArticlesController : ControllerBase
     {
-        //Bunların her biri bir endpoint
+        private readonly INewsRepository _newsRepository;
+
+        public NewsArticlesController(INewsRepository newsRepository)
+        {
+            _newsRepository = newsRepository;
+        }
         [HttpGet]
-        public async Task<ActionResult<NewsArticle>> GetById()
+        public async Task<ActionResult<IEnumerable<NewsArticle>>> GetAll(CancellationToken cancellation)
+        {
+            var articles = await _newsRepository.GetAllAsync(cancellation);
+            return Ok(articles);
+        }
+
+
+        //Bunların her biri bir endpoint
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<NewsArticle>> GetById(int id)
         {
             var article = new NewsArticle()
             {

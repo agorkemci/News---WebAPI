@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using News___WebAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+var connectionString = builder.Configuration.GetConnectionString("NewsDb");//anahtarı yakala
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();//uç noktaları keşfet
 // Swagger için gerekli servisleri ekliyoruz.
@@ -28,9 +30,15 @@ builder.Services.AddSwaggerGen(options =>
 // OpenAPI, API'nin endpoint'lerini, modellerini,
 // istek ve cevaplarını standart bir formatta tanımlamak için kullanılır.
 builder.Services.AddOpenApi();
-
+builder.Services.AddDbContext<NewsDbContext>(options=>options.UseSqlServer(connectionString));//yakalanan anahtarı sqlserverı kullanmak için options üzerinden kullan
+builder.Services.AddScoped<INewsRepository,NewsRepository>();//ınewrepo istendiği zaman newsrepository nesnesinin referans alınmasını sağla
 var app = builder.Build();
+using(var scope = app.Services.CreateScope())
+{
+    var dbContex = scope.ServiceProvider.GetRequiredService<NewsDbContext>();
+    dbContex.Database.Migrate();
 
+}
 // HTTP request pipeline (istek işlem hattı) burada yapılandırılıyor.
 
 // Uygulamanın Development ortamında olup olmadığını kontrol eder.

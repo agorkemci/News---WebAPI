@@ -2,7 +2,7 @@
 
 namespace News___WebAPI.Repositories
 {
-    public interface INewsRepositories
+    public interface INewsRepository
     {
         Task<List<NewsArticle>> GetAllAsync(CancellationToken cancellationToken=default);//async olduğu için iptal edilebilir.
 
