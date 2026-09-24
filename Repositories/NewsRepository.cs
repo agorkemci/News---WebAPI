@@ -44,7 +44,9 @@ namespace News___WebAPI.Repositories
             return entity;
         }
 
-        public async void UpdateAsync(NewsArticle newsArticle, CancellationToken cancellationToken = default)
+    
+
+        public Task INewsRepository.UpdateAsync(NewsArticle newsArticle, CancellationToken cancellationToken)
         {
             newsDbContext.NewsArticlesTable.Update(newsArticle);
             await newsDbContext.SaveChangesAsync(cancellationToken);

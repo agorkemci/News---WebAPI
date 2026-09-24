@@ -27,34 +27,49 @@ namespace News___WebAPI.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<NewsArticle>> GetById(int id)
         {
-            var article = new NewsArticle()
-            {
-                Id = 1,
-                Title="Title",
-                Slug="/title",
-                PublishedAt=DateTime.Now,
-                AuthorName="Auther",
-                Content="News Content.",
-                Summary="Summary of the news",
-                Status=NewsStatus.Draft
-            };
-            return article;
+            var article = await _newsRepository.GetByIdAsync(id);
+            if (article is null)
+                return NotFound(); //404
+            return Ok(article); //200
 
-        }//Bir eylem sonucu döneceğimizi ve bu dönüşün News article içereceğini söylüyoruz
+        } //Bir eylem sonucu döneceğimizi ve bu dönüşün News article içereceğini söylüyoruz
         [HttpPost]
-        public async Task<ActionResult<NewsArticle>> Create()
+        public async Task<ActionResult<NewsArticle>> Create([FromBody]NewsArticle newsArticle,CancellationToken cancellationToken)
         {
-            return Ok();
+            //FromBody ile Kullanıcının gönderdiği paketlenmiş veriyi (başlık, metin vb.) alır ve sistemin anlayacağı bir haber nesnesine çevirir.
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+            var created=await _newsRepository.AddAsync(newsArticle,cancellationToken);// Gelen haberi veritabanına kaydeder.
+            return CreatedAtAction(
+                nameof(GetById),           // 1. Nereye baksın? (Hedef metodun adı)
+                new { id = created.Id },   // 2. Oraya giderken hangi bilgileri götürsün? (URL parametreleri)
+                created                    // 3. Kullanıcının eline neyi teslim etsin? (Kaydedilen haberin kendisi)
+            );
         }
         [HttpPut]
-        public async Task<ActionResult<NewsArticle>> Update()
+        public async Task<ActionResult<NewsArticle>> Update([FromRoute] int id, [FromBody] NewsArticle  newsArticle, CancellationToken cancellationToken)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+            if (id != newsArticle.Id)
+                return BadRequest("Route data is not valid!");
+            var existing = await _newsRepository.GetByIdAsync(id,cancellationToken);
+            if (existing is null)
+                return NotFound();//404
+
+            await _newsRepository.UpdateAsync(newsArticle, cancellationToken);
+            return NoContent();
+
         }
-        [HttpDelete]
-        public async Task<ActionResult<NewsArticle>> Delete()
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
         {
-            return Ok();
+            var existing = await _newsRepository.GetByIdAsync(id, cancellationToken);
+            if (existing is null)
+                return NotFound(); // 404
+
+            await _newsRepository.DeleteAsync(id, cancellationToken);
+            return NoContent(); // 204
         }
 
 

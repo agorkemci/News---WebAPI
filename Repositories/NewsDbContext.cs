@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using News___WebAPI.Models;
+using System.Reflection;
 using static System.Net.WebRequestMethods;
 
 namespace News___WebAPI.Repositories
@@ -17,6 +18,7 @@ namespace News___WebAPI.Repositories
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); //C# sınıflarımın veritabanında nasıl temsil edileceğini burada özel olarak yapılandı. FluentAPI(FluentValidation) kullanımı model builder ile gerçekleşiyor.
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());// Bu derlemedeki (assembly) tüm IEntityTypeConfiguration sınıflarını otomatik uygular
         }
     }
 }

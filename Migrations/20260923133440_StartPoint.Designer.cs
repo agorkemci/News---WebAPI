@@ -12,7 +12,7 @@ using News___WebAPI.Repositories;
 namespace News___WebAPI.Migrations
 {
     [DbContext(typeof(NewsDbContext))]
-    [Migration("20260923103919_StartPoint")]
+    [Migration("20260923133440_StartPoint")]
     partial class StartPoint
     {
         /// <inheritdoc />

@@ -10,7 +10,7 @@ namespace News___WebAPI.Repositories
 
         Task<NewsArticle> AddAsync(NewsArticle newsArticle, CancellationToken cancellationToken= default);
 
-        void UpdateAsync(NewsArticle newsArticle, CancellationToken cancellationToken = default);
+        Task UpdateAsync(NewsArticle newsArticle, CancellationToken cancellationToken = default);
 
         Task DeleteAsync(int id, CancellationToken cancellationToken = default);
 
