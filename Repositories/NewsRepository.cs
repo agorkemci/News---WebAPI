@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using News___WebAPI.Models;
+using System.Linq;
 
 namespace News___WebAPI.Repositories
 {
@@ -46,7 +47,7 @@ namespace News___WebAPI.Repositories
 
     
 
-        public Task INewsRepository.UpdateAsync(NewsArticle newsArticle, CancellationToken cancellationToken)
+        public async Task UpdateAsync(NewsArticle newsArticle, CancellationToken cancellationToken = default)
         {
             newsDbContext.NewsArticlesTable.Update(newsArticle);
             await newsDbContext.SaveChangesAsync(cancellationToken);
